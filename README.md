@@ -1,5 +1,6 @@
 # Books Gallary
-a small task to show my architect style 
+a small task to show my architect style.
+
 this code add authoers and their books in the system, the user has the folllowing tasks 
 
 - adding authoers 
