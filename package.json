@@ -7,8 +7,9 @@
     "test": "test"
   },
   "scripts": {
+    "start": "node index.mjs",
     "dev": "nodemon index.mjs",
-    "test": "mocha --timeout 7000 --recursive --exit"
+    "test": "mocha --timeout 5000 --recursive --exit"
   },
   "repository": {
     "type": "git",
