@@ -4,12 +4,17 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
-import mongoSanitize from 'express-mongo-sanitize'
-import xss from 'xss-clean';
 import dotenv from 'dotenv'
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { MongoMemoryServer } from 'mongodb-memory-server';
+//securtiy
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize'
+import xss from 'xss-clean';
+import hpp from 'hpp';
+
 dotenv.config();
 
 import authorRoutes from './routes/authorRoutes.mjs';
@@ -19,7 +24,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-
+// Set security HTTP headers
+app.use(helmet());
+// Limit requests from same API
+const limiter = rateLimit({
+    max: 300,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
 
 
 const db = process.env.mongoURI;
@@ -62,8 +75,10 @@ app.use(mongoSanitize());
 
 // Data sanitization against XSS
 app.use(xss());
-
-
+//  for white list query parametars ...
+app.use(hpp({
+    whitelist: ['month', 'year', 'toExcel']
+}));
 const V = process.env.API_Virsion;
 
 app.get('/', (req, res) => {
